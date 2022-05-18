@@ -20,30 +20,37 @@ export const CMAclient = contentfulCMA.createClient({
 
 function App() {
 
-  const [page, setPage] = useState(null);
+  const [startPage, setStartPage] = useState(null);
+  const [title, setTitle] = useState(null);
+  const [logo, setLogo] = useState(null);
+
 
   useEffect(() => {
      CDAclient.getEntries()
-    .then((response) => setPage(response.items))
+    .then((response) => setPageData(response.items))
     .catch(console.error)
   }, []);
+  
 
+  function setPageData (page) {
+    setStartPage(page[0])
+    setTitle(page[0].fields.title)
+    setLogo(page[0].fields.logo.fields.file.url)
+  }
+  
+  console.log(startPage)
 
-  console.log(page)
-
-  if (!page) {
+  if (!startPage) {
     return "Loading...";
   } 
-
-//   <img src={page.logo.url} className="App-logo" alt={page.logo.description} />
-//   <p>
-//   {page.title}
-// </p>
 
 return (
     <div className="App">
       <header className="App-header">
-        
+       <h1>{title}</h1>
+       <img className="App-logo"
+     src={logo}
+     alt="Bild"/>
       </header>
     </div>
   );
