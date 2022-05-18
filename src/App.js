@@ -1,62 +1,49 @@
-
 import {useState, useEffect} from "react";
 import './App.css';
 
-const query = `{
-  headerCollection {
-    items {
-      title
-      logo {
-        title
-        description
-        contentType
-        fileName
-        size
-        url
-        width
-        height
-      }
-    }
-  }
-}`
+
+// CONTENTFUL CONFIG 
+const contentfulCDA = require("contentful");
+const contentfulCMA = require('contentful-management')
+
+export const CDAclient = contentfulCDA.createClient({
+  space: '43o547dfys9y',
+  environment: 'fanny', // defaults to 'master' if not set
+  accessToken: 'sjWlleHTWjJsfXBFvEd41HS9NfKdBw4QjW-ixQLdE0Q'
+})
+
+export const CMAclient = contentfulCMA.createClient({
+  // This is the access token for this space. Normally you get the token in the Contentful web app
+  accessToken: 'CFPAT-QTQmBS2vubwsudLrTi2p6zGQxx9oQTWJtJoVfIYDsA0'
+})
+
 
 function App() {
 
   const [page, setPage] = useState(null);
 
   useEffect(() => {
-    window
-      .fetch(`https://graphql.contentful.com/content/v1/spaces/43o547dfys9y`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Authenticate the request
-          Authorization: "Bearer sjWlleHTWjJsfXBFvEd41HS9NfKdBw4QjW-ixQLdE0Q",
-        },
-        // send the GraphQL query
-        body: JSON.stringify({ query }),
-      })
-      .then((response) => response.json())
-      .then(({ data, errors }) => {
-        if (errors) {
-          console.error(errors);
-        }
-        // rerender the entire component with new data
-        setPage(data.headerCollection.items[0]);
-      });
+     CDAclient.getEntries()
+    .then((response) => setPage(response.items))
+    .catch(console.error)
   }, []);
+
+
+  console.log(page)
 
   if (!page) {
     return "Loading...";
   } 
 
+//   <img src={page.logo.url} className="App-logo" alt={page.logo.description} />
+//   <p>
+//   {page.title}
+// </p>
+
 return (
     <div className="App">
       <header className="App-header">
-        <img src={page.logo.url} className="App-logo" alt={page.logo.description} />
-        <p>
-          {page.title}
-        </p>
+        
       </header>
     </div>
   );
