@@ -1,57 +1,56 @@
 import {useState, useEffect} from "react";
 import './App.css';
-
-
-// CONTENTFUL CONFIG 
-const contentfulCDA = require("contentful");
-const contentfulCMA = require('contentful-management')
-
-export const CDAclient = contentfulCDA.createClient({
-  space: '',
-  environment: '', // defaults to 'master' if not set
-  accessToken: ''
-})
-
-export const CMAclient = contentfulCMA.createClient({
-  // This is the access token for this space. Normally you get the token in the Contentful web app
-  accessToken: ''
-})
-
+import { CDAclient, CMAclient } from "./config";
 
 function App() {
 
-  const [startPage, setStartPage] = useState(null);
+  //const [startPage, setStartPage] = useState(null);
   const [title, setTitle] = useState(null);
   const [logo, setLogo] = useState(null);
+  const [navigation, setNavigation] = useState(['',''])
 
 
   useEffect(() => {
-     CDAclient.getEntries()
+     CDAclient.getEntries({
+      content_type: 'header'
+     })
     .then((response) => setPageData(response.items))
     .catch(console.error)
   }, []);
   
 
-  function setPageData (page) {
-    setStartPage(page[0])
-    setTitle(page[0].fields.title)
-    setLogo(page[0].fields.logo.fields.file.url)
+  function setPageData(pages) {
+    
+    pages.forEach(page => {
+    setTitle(page.fields.title)
+    setLogo(page.fields.logo.fields.file.url)
+    setNavigation(page.fields.navigation)
+    // page.fields.navigation.map(navItem => 
+    //   setNavigationItem(navItem)
+    //   );
+     });
   }
-  
-  console.log(startPage)
+console.log(navigation);
 
-  if (!startPage) {
-    return "Loading...";
-  } 
+    function Nav() {
+    if (!navigation) return
+     return navigation.map((n, index) => {
+      console.log(n);
+       return <li key={index}>{n.fields?.categoryName}</li>;
+      });
+    }
 
 return (
     <div className="App">
-      <header className="App-header">
+       <header className="App-header">
        <h1>{title}</h1>
        <img className="App-logo"
      src={logo}
      alt="Bild"/>
       </header>
+      <ul>
+         {Nav()} 
+      </ul>
     </div>
   );
 }
