@@ -1,0 +1,25 @@
+.navbar {
+    display: flex;
+    flex-direction: row;
+    background-color: aliceblue;
+    align-items: center;
+    gap: 20px;
+    margin-left: 2rem;
+}
+
+.logo {
+    width: auto;
+    height: 2rem;
+}
+
+.navitem {
+    list-style: none;
+    text-decoration: none;
+    color: black;
+    font-size: x-large;
+}
+
+.title {
+    text-decoration: none;
+    color: black;
+}
